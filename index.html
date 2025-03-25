@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神农投资陈营长的微博内容</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        h1 {
+            text-align: center;
+            color: #1a1a1a;
+            margin: 20px 0;
+            font-size: 24px;
+        }
+        .post {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .post-date {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .post-content {
+            margin-bottom: 15px;
+            word-wrap: break-word;
+        }
+        .post-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .post-content br {
+            display: block;
+            margin: 5px 0;
+        }
+        .expand {
+            color: #1DA1F2;
+            cursor: pointer;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .post {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>神农投资陈营长的微博内容</h1>
+    <div id="posts"></div>
+
+    <script>
+        async function loadContent() {
+            try {
+                const response = await fetch('weibo_content.md');
+                const text = await response.text();
+                const posts = text.split('---').filter(post => post.trim());
+                const postsContainer = document.getElementById('posts');
+
+                posts.forEach(post => {
+                    const postDiv = document.createElement('div');
+                    postDiv.className = 'post';
+                    
+                    // 处理日期
+                    const dateMatch = post.match(/## (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/);
+                    if (dateMatch) {
+                        const dateDiv = document.createElement('div');
+                        dateDiv.className = 'post-date';
+                        dateDiv.textContent = dateMatch[1];
+                        postDiv.appendChild(dateDiv);
+                    }
+
+                    // 处理内容
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'post-content';
+                    let content = post.replace(/^#.*\n|^##.*\n/gm, '').trim(); // 移除标题
+                    
+                    // 处理图片
+                    content = content.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
+                    
+                    // 处理表情图片
+                    content = content.replace(/<img alt="\[(.*?)\]".*?src="(.*?)".*?>/g, '<img src="$2" alt="$1" style="width: 20px; height: 20px; vertical-align: middle;">');
+                    
+                    contentDiv.innerHTML = content;
+                    postDiv.appendChild(contentDiv);
+                    postsContainer.appendChild(postDiv);
+                });
+            } catch (error) {
+                console.error('Error loading content:', error);
+            }
+        }
+
+        loadContent();
+    </script>
+</body>
+</html>
